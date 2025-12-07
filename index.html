@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор</title>
     <style>
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --calculator-bg: #ffffff;
+            --display-bg: #1a1a1a;
+            --display-text: #ffffff;
+            --button-bg: #f0f0f0;
+            --button-hover: #e0e0e0;
+            --button-text: #333;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-light: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --calculator-bg: #0f1419;
+            --display-bg: #1e2329;
+            --display-text: #e4e4e4;
+            --button-bg: #2a2d3a;
+            --button-hover: #353849;
+            --button-text: #e4e4e4;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --shadow-light: rgba(0, 0, 0, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,22 +43,60 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             padding: 20px;
+            transition: background 0.3s ease;
         }
 
         .calculator {
-            background: #ffffff;
+            background: var(--calculator-bg);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px var(--shadow);
             padding: 30px;
             max-width: 400px;
             width: 100%;
+            position: relative;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 26px;
+            background: var(--button-bg);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 2px solid var(--button-hover);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(24px);
+            background: #ffd700;
+        }
+
+        .theme-toggle:hover {
+            background: var(--button-hover);
         }
 
         .display {
-            background: #1a1a1a;
-            color: #ffffff;
+            background: var(--display-bg);
+            color: var(--display-text);
             font-size: 2.5rem;
             padding: 20px;
             text-align: right;
@@ -44,6 +108,7 @@
             justify-content: flex-end;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .buttons {
@@ -53,7 +118,7 @@
         }
 
         button {
-            background: #f0f0f0;
+            background: var(--button-bg);
             border: none;
             border-radius: 10px;
             font-size: 1.5rem;
@@ -61,18 +126,18 @@
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 600;
-            color: #333;
+            color: var(--button-text);
         }
 
         button:hover {
-            background: #e0e0e0;
+            background: var(--button-hover);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px var(--shadow-light);
         }
 
         button:active {
             transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px var(--shadow-light);
         }
 
         .operator {
@@ -109,6 +174,7 @@
 </head>
 <body>
     <div class="calculator">
+        <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light theme"></div>
         <div class="display" id="display">0</div>
         <div class="buttons">
             <button class="clear" onclick="clearDisplay()">C</button>
@@ -137,6 +203,23 @@
     </div>
 
     <script>
+        // Theme management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Initialize theme on page load
+        initTheme();
+
+        // Calculator logic
         let display = document.getElementById('display');
         let currentInput = '0';
         let shouldResetDisplay = false;
