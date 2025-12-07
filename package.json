@@ -1,0 +1,17 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "Browser calculator",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "calculator",
+    "html",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
